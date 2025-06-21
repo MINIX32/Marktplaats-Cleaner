@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Marktplaats Cleaner</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { width: 100%; padding: 10px; font-size: 16px; }
+        #status { margin-top: 15px; text-align: center; }
+    </style>
+</head>
+<body>
+    <button id="toggleBtn">Enable</button>
+    <div id="status">Extension is <span id="state">disabled</span></div>
+    <script>
+        // Use browser.storage.local to persist state
+        function updateUI(enabled) {
+            document.getElementById('toggleBtn').textContent = enabled ? 'Disable' : 'Enable';
+            document.getElementById('state').textContent = enabled ? 'enabled' : 'disabled';
+        }
+
+        // Get current state
+        browser.storage.local.get(['mc_enabled']).then(function(result) {
+            const enabled = result.mc_enabled === true;
+            updateUI(enabled);
+        });
+
+        // Toggle state on button click
+        document.getElementById('toggleBtn').addEventListener('click', function() {
+            browser.storage.local.get(['mc_enabled']).then(function(result) {
+                const enabled = !(result.mc_enabled === true);
+                browser.storage.local.set({ mc_enabled: enabled }).then(function() {
+                    updateUI(enabled);
+                    // Optionally, send a message to content scripts/background
+                    browser.runtime.sendMessage({ type: 'MC_TOGGLE', enabled: enabled });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
