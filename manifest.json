@@ -11,6 +11,11 @@
         "128": "icons/logo-128.png",
         "256": "icons/logo-256.png"
     },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "MiniX32@github.com"
+        }
+    },
     "content_scripts": [
         {
             "matches": [
@@ -22,10 +27,7 @@
         }
     ],
     "permissions": [
-        "storage",
-        "activeTab",
-        "webNavigation",
-        "tabs"
+        "storage"
     ],
     "browser_action": {
         "default_icon": {

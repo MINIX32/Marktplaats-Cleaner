@@ -1,41 +1,167 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Marktplaats Cleaner</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        button { width: 100%; padding: 10px; font-size: 16px; }
-        #status { margin-top: 15px; text-align: center; }
-    </style>
+    <script src="MC_Popup.js" defer></script>
+    <link rel="stylesheet" href="MC_Popup.css">
 </head>
+
 <body>
-    <button id="toggleBtn">Enable</button>
-    <div id="status">Extension is <span id="state">disabled</span></div>
-    <script>
-        // Use browser.storage.local to persist state
-        function updateUI(enabled) {
-            document.getElementById('toggleBtn').textContent = enabled ? 'Disable' : 'Enable';
-            document.getElementById('state').textContent = enabled ? 'enabled' : 'disabled';
-        }
+    <div id="header">
+        <p><img style="float: left;" src="../icons/logo-64.png" alt="Marktplaats Cleaner Logo" width="64" height="64" />
+        </p>
+        <h1 id="Name">
+            <span style="color: #eda566;">Marktplaats <div style="color: #000000;">Cleaner</div></span>
+        </h1>
+    </div>
 
-        // Get current state
-        browser.storage.local.get(['mc_enabled']).then(function(result) {
-            const enabled = result.mc_enabled === true;
-            updateUI(enabled);
-        });
-
-        // Toggle state on button click
-        document.getElementById('toggleBtn').addEventListener('click', function() {
-            browser.storage.local.get(['mc_enabled']).then(function(result) {
-                const enabled = !(result.mc_enabled === true);
-                browser.storage.local.set({ mc_enabled: enabled }).then(function() {
-                    updateUI(enabled);
-                    // Optionally, send a message to content scripts/background
-                    browser.runtime.sendMessage({ type: 'MC_TOGGLE', enabled: enabled });
-                });
-            });
-        });
-    </script>
+    <table>
+        <tr>
+            <td>
+                <p>
+                    Zakelijke verkoper
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="verkoperCheckbox">
+                        <input type="checkbox" id="verkoperCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </td>
+        <tr>
+            <td>
+                <p>
+                    Topadvertenties
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="topCheckbox">
+                        <input type="checkbox" id="topCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Dagtoppers
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="dagtoppersCheckbox">
+                        <input type="checkbox" id="dagtoppersCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Gesponsord
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="gesponsordCheckbox">
+                        <input type="checkbox" id="gesponsordCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Met website
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="websiteCheckbox">
+                        <input type="checkbox" id="websiteCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Used products
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="usedCheckbox">
+                        <input type="checkbox" id="usedCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Catawiki
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="catawikiCheckbox">
+                        <input type="checkbox" id="catawikiCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    .nl
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="nlCheckbox">
+                        <input type="checkbox" id="nlCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    www
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="wwwCheckbox">
+                        <input type="checkbox" id="wwwCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    Marktplaats ads
+                </p>
+            </td>
+            <td>
+                <div class="container">
+                    <label class="switch" for="adsCheckbox">
+                        <input type="checkbox" id="adsCheckbox" checked/>
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </td>
+        </tr>
 </body>
+
 </html>
