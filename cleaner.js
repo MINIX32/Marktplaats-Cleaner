@@ -131,6 +131,7 @@ async function cleanPage() {
             removeAll('#banner-right-container');
             removeAll('#adsense-container');
             removeAll('.hz-Banner');
+            removeAll('#adsense-container-top-lazy');
         }
     });
 }
