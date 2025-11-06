@@ -20,7 +20,7 @@ Here're some of the project's best features:
 
 <h2>🛠️ Installation Steps:</h2>
 
-<p>1. Go to ....... (yet to come)</p>
+<p>1. Go to <a href="https://addons.mozilla.org/en-US/firefox/addon/marktplaats-cleaner/">Mozilla</a></p>
 
 <p>2. Click install</p>
 
