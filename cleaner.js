@@ -1,35 +1,59 @@
 /**
  * Marktplaats Cleaner - Removes unwanted elements from the listings page.
-    * This script is designed to enhance the user experience by removing ads, sponsored listings.
-    * This is done by hiding elements that match specific criteria. Removing elements would break SPA.
+ * This script enhances user experience by removing ads and sponsored listings.
  */
-
-// Utility to remove all elements matching a selector
+const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+let settings = {};
 
 async function init() {
-    await browser.storage.sync.get("init")
-    .then((result) => {
-        if (Object.values(result)[0] == true) {
-            console.log("Marktplaats Cleaner already initialized.");
-        }
-        else {
-            // Set default values for checkboxes
-            browser.storage.sync.set({
-                "init": true,
-                "verkoperCheckbox": true,
-                "topCheckbox": true,
-                "dagtoppersCheckbox": true,
-                "gesponsordCheckbox": true,
-                "websiteCheckbox": true,
-                "usedCheckbox": true,
-                "catawikiCheckbox": true,
-                "nlCheckbox": true,
-                "wwwCheckbox": true,
-                "adsCheckbox": true
+    try {
+        // Get both init flag and settings in one call
+        const result = await browserAPI.storage.sync.get(["init", "settings"]);
+
+        if (!result.init) {
+            // Set default values if not initialized
+            const defaultSettings = {
+                verkoperCheckbox: true,
+                topCheckbox: true,
+                dagtoppersCheckbox: true,
+                gesponsordCheckbox: true,
+                websiteCheckbox: true,
+                usedCheckbox: true,
+                catawikiCheckbox: true,
+                nlCheckbox: true,
+                wwwCheckbox: true,
+                adsCheckbox: true,
+                load100Checkbox: true
+            };
+
+            await browserAPI.storage.sync.set({
+                init: true,
+                settings: defaultSettings
             });
-            console.log("Marktplaats Cleaner initialized with default settings.");
+
+            settings = defaultSettings;
+            console.log("Initialized with default settings");
+        } else {
+            settings = result.settings || {};
+            console.log("Loaded existing settings", settings);
         }
-    });
+
+        cleanPage();
+        load100(); // Load 100 listings if the setting is enabled
+        sortbyDistance(); // Ensure the "Afstand" option is available in the dropdown 
+
+        new MutationObserver(() => {
+            cleanPage(); // Run on every mutation to ensure the page stays clean
+            load100(); // Check if we need to load 100 listings on every mutation
+            sortbyDistance(); // Ensure the "Afstand" option is available in the dropdown on every mutation
+        }).observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+    } catch (error) {
+        console.error("Initialization error:", error);
+    }
 }
 
 function removeAll(selector) {
@@ -44,104 +68,90 @@ function removeAllWithText(selector, text) {
     });
 }
 
-
 async function cleanPage() {
+
     // Remove listings with specific seller info icon
-    await browser.storage.sync.get("verkoperCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            // Remove listings with seller info icon
-            removeAll('li.hz-Listing:has(.hz-Listing-seller-name-container .hz-Icon--signalInfoDefault)');
-        }
-    });
+    if (settings["verkoperCheckbox"])
+        removeAll('li.hz-Listing:has(.hz-Listing-seller-name-container .hz-Icon--signalInfoDefault)');
 
-    await browser.storage.sync.get("topCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            // Remove listings with "Topadvertentie" text
-            removeAllWithText('li.hz-Listing', 'Topadvertentie');
-        }
-    });
+    // Remove listings with "Topadvertentie" text
+    if (settings.topCheckbox) {
+        removeAllWithText('li.hz-Listing', 'Topadvertentie');
+    }
 
-    await browser.storage.sync.get("dagtoppersCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            // Remove listings with "Dagtopper" text
-            removeAllWithText('li.hz-Listing', 'Dagtopper');
-        }
-    });
+    // Remove listings with "Dagtopper" text
+    if (settings.dagtoppersCheckbox)
+        removeAllWithText('li.hz-Listing', 'Dagtopper');
 
-    await browser.storage.sync.get("gesponsordCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            // Remove listings with "Gesponsord" text
-            removeAllWithText('li.hz-Listing', 'Gesponsord');
-        }
-    });
+    // Remove listings with "Gesponsord" text
+    if (settings.gesponsordCheckbox)
+        removeAllWithText('li.hz-Listing', 'Gesponsord');
 
-    await browser.storage.sync.get("websiteCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            // Remove listings with naar website link
-            removeAll('li.hz-Listing:has(.hz-Listing-seller-external-link)');
-
-        }
-    });
+    // Remove listings with naar website link
+    if (settings.websiteCheckbox)
+        removeAll('li.hz-Listing:has(.hz-Listing-seller-external-link)');
 
     // Remove listings from "Used Products"
-    await browser.storage.sync.get("usedCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            removeAllWithText('li.hz-Listing', 'Used Products');
-        }
-    });
+    if (settings.usedCheckbox)
+        removeAllWithText('li.hz-Listing', 'Used Products');
 
     // Remove listings from Catawiki
-    await browser.storage.sync.get("catawikiCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            removeAllWithText('li.hz-Listing', 'Catawiki');
-        }
-    });
+    if (settings.catawikiCheckbox)
+        removeAllWithText('li.hz-Listing', 'Catawiki');
 
     // Remove listings with .nl
-    await browser.storage.sync.get("nlCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            removeAllWithText('li.hz-Listing', '.nl');
-        }
-    });
+    if (settings.nlCheckbox)
+        removeAllWithText('li.hz-Listing', '.nl');
+
 
     // Remove listings with www
-    await browser.storage.sync.get("wwwCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            removeAllWithText('li.hz-Listing', 'www');
-        }
-    });
+    if (settings.wwwCheckbox)
+        removeAllWithText('li.hz-Listing', 'www');
 
     // Remove ads and banners
-    await browser.storage.sync.get("adsCheckbox")
-    .then (result => {
-        if (Object.values(result)[0]) {
-            removeAll('.hz-Listings__container--cas');
-            removeAll('#banner-top-dt');
-            removeAll('#banner-rubrieks-dt');
-            removeAll('.bannerContainerLoading');
-            removeAll('#banner-right-container');
-            removeAll('#adsense-container');
-            removeAll('.hz-Banner');
-            removeAll('#adsense-container-top-lazy');
-        }
-    });
+    if (settings.adsCheckbox)
+        removeAll('.hz-Listings__container--cas');
+    removeAll('#banner-top-dt');
+    removeAll('#banner-rubrieks-dt');
+    removeAll('.bannerContainerLoading');
+    removeAll('#banner-right-container');
+    removeAll('#adsense-container');
+    removeAll('.hz-Banner');
+    removeAll('#adsense-container-top-lazy');
+}
+
+function load100() {
+    let currentUrl = window.location.href;
+    if (settings.load100Checkbox == false) return; // Do not load 100 listings if the setting is disabled
+    if (currentUrl.includes("limit:100")) {
+        return; // Already loaded
+    }
+    if (currentUrl.includes("#")) {
+        currentUrl = currentUrl + "|limit:100";
+    }
+    else {
+        currentUrl = currentUrl + "#limit:100";
+    }
+    window.location.href = currentUrl;
+    console.log("Loaded 100 listings");
+}
+
+function sortbyDistance() {
+
+    if (!window.location.href.includes('postcode')) return; // Do not add "Afstand" option if postcode is not present in the URL
+
+    const sortByDistanceDropdown = document.querySelector('select#Dropdown-sorteerOp');
+
+    // Check if the "Afstand" option exists, if not, add it
+    let afstandOption = Array.from(sortByDistanceDropdown.options).find(
+        opt => opt.textContent.trim() === "Afstand"
+    );
+    if (!afstandOption) {
+        afstandOption = document.createElement("option");
+        afstandOption.value = '{"sortBy":"LOCATION","sortOrder":"INCREASING"}';
+        afstandOption.textContent = "Afstand";
+        sortByDistanceDropdown.appendChild(afstandOption);
+    }
 }
 
 init(); // Initialize the cleaner settings
-cleanPage(); //First run to clean the page
-setTimeout(cleanPage, 5000); // Run again after 5 seconds to ensure all elements are cleaned
-new MutationObserver(() => {
-    cleanPage(); // Run on every mutation to ensure the page stays clean
-}).observe(document.body, {
-    childList: true,
-    subtree: true
-});
