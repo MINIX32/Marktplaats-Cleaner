@@ -16,6 +16,8 @@ Here're some of the project's best features:
 *   Removes businesses
 *   Removes sellers with a website
 *   Removes annoying sellers
+*   Add option to sort on distance without setting distance limit
+*   Load more posts per page
 *   Ability to turn on/off any of the features
 
 <h2>🛠️ Installation Steps:</h2>
