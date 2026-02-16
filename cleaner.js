@@ -62,7 +62,7 @@ function removeAll(selector) {
 
 function removeAllWithText(selector, text) {
     document.querySelectorAll(selector).forEach(el => {
-        if (el.textContent.includes(text)) {
+        if (el.textContent.includes(text) || el.textContent.includes(text.toUpperCase())) {
             el.style.display = 'none';
         }
     });
@@ -72,7 +72,7 @@ async function cleanPage() {
 
     // Remove listings with specific seller info icon
     if (settings["verkoperCheckbox"])
-        removeAll('li.hz-Listing:has(.hz-Listing-seller-name-container .hz-Icon--signalInfoDefault)');
+        removeAll('li.hz-Listing:has(.hz-Icon--signalInfoDefault)');
 
     // Remove listings with "Topadvertentie" text
     if (settings.topCheckbox) {
@@ -111,6 +111,7 @@ async function cleanPage() {
     // Remove ads and banners
     if (settings.adsCheckbox)
         removeAll('.hz-Listings__container--cas');
+
     removeAll('#banner-top-dt');
     removeAll('#banner-rubrieks-dt');
     removeAll('.bannerContainerLoading');
