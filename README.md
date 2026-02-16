@@ -16,11 +16,13 @@ Here're some of the project's best features:
 *   Removes businesses
 *   Removes sellers with a website
 *   Removes annoying sellers
+*   Add option to sort on distance without setting distance limit
+*   Load more posts per page
 *   Ability to turn on/off any of the features
 
 <h2>🛠️ Installation Steps:</h2>
 
-<p>1. Go to ....... (yet to come)</p>
+<p>1. Go to <a href="https://addons.mozilla.org/en-US/firefox/addon/marktplaats-cleaner/">Mozilla</a></p>
 
 <p>2. Click install</p>
 
